@@ -1,78 +1,64 @@
-function computerPLay() {
-    const computersChoise = Math.floor(Math.random() * 3);
-    switch (computersChoise) {
-        case 0:
-            return "rock";
-        case 1:
-            return "paper";
-        case 2:
-            return "scissors";
-        default:
-            console.error("Error: Something went wrong");
-    }
+let currentRound = parseInt(localStorage.getItem("currentRound")) || 1;
+
+document.querySelector(".btn").addEventListener("click", startGame);
+
+function computerPlay() {
+    const choices = ["rock", "paper", "scissors"];
+    const randomIndex = Math.floor(Math.random() * choices.length);
+    return choices[randomIndex];
 }
 
 function playRound(playerSelection, computerSelection) {
-    if (playerSelection === null) {
+    playerSelection = playerSelection ? playerSelection.toLowerCase() : null;
+
+    if (!playerSelection) {
         return "Error: Canceled the game.";
-       
-    }
-    
-    playerSelection = playerSelection.toLowerCase();
-    if (playerSelection === "rock" && computerSelection === "scissors") {
-        return "You win! Rock beats Scissors";
-    }
-    else if (playerSelection === "paper" && computerSelection === "rock") {
-        return "You win! Paper beats Rock";
-    }
-    else if (playerSelection === "scissors" && computerSelection === "paper") {
-        return "You win! Scissors beats Paper";
-    }
-    else if (playerSelection === "rock" && computerSelection === "paper") {
-        return "You lose! Paper beats Rock";
-    }
-    else if (playerSelection === "paper" && computerSelection === "scissors") {
-        return "You lose! Scissors beats Paper";
-    }
-    else if (playerSelection === "scissors" && computerSelection === "rock") {
-        return "You lose! Rock beats Scissors";
-    }
-    else if (playerSelection === computerSelection) {
-        return "It's a tie!";
-    }
-    else {
-        return "Error: Please choose rock, paper or scissors!";
     }
 
+    if (currentRound < 1 || currentRound > 5) {
+        return "Error: Invalid round number";
+    }
+
+    const outcomes = {
+        rock: { beats: "scissors", message: "Rock beats Scissors" },
+        paper: { beats: "rock", message: "Paper beats Rock" },
+        scissors: { beats: "paper", message: "Scissors beats Paper" },
+    };
+
+    if (playerSelection === computerSelection) {
+        return "It's a tie!";
+    } else if (outcomes[playerSelection] !== undefined && outcomes[playerSelection].beats === computerSelection) {
+        return "You win! " + outcomes[playerSelection].message;
+    } else {
+        return "You lose! " + outcomes[computerSelection].message;
+    }
+}
+
+function updateRoundCounter() {
+    const roundCounter = document.getElementById("roundCounter");
+    roundCounter.textContent = `Round ${currentRound}`;
 }
 
 function game() {
-    for (let i = 1; i <= 5; i++) {
-        let playerSelection = prompt(`Round ${i}: GO!`);
-        let computerSelection = computerPLay();
-        let result = playRound(playerSelection, computerSelection)
+    for (; currentRound <= 5; currentRound++) {
+        let playerSelection = prompt(`Round ${currentRound}: GO!`);
+        let computerSelection = computerPlay();
+        let result = playRound(playerSelection, computerSelection);
+
         if (result.includes("Error")) {
             console.error(result);
-            i--;
+            currentRound--;
             break;
-        }
-        else {
+        } else {
             console.log(result);
-            if (result.includes("You lose") || result.includes("tie"))
-                i--;
         }
     }
 
     console.log("Game over! Congratulations!");
 }
 
-
-function Startgame() {
+function startGame() {
+    currentRound = 1;
+    updateRoundCounter();
     game();
 }
-
-
-let Trigger = document.querySelector(".btn");
-
-Trigger.addEventListener("click", Startgame);
-
