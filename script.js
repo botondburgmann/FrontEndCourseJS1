@@ -50,10 +50,9 @@ function game() {
             currentRound--;
             break;
         } else {
-            console.log(result);
+            console.log(result); 
         }
     }
-
     console.log("Game over! Congratulations!");
 }
 
