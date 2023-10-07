@@ -1,5 +1,9 @@
 let currentRound = parseInt(localStorage.getItem("currentRound")) || 1;
-let userWins = 0;
+let userWins = parseInt(localStorage.getItem("userWins")) || 0;
+
+const Wincount = document.getElementById("userWins");
+Wincount.textContent = Math.floor(userWins / 5);
+
 
 document.querySelector(".btn").addEventListener("click", startGame);
 
@@ -29,9 +33,7 @@ function playRound(playerSelection, computerSelection) {
     if (playerSelection === computerSelection) {
         return "It's a tie!";
     } else if (outcomes[playerSelection] !== undefined && outcomes[playerSelection].beats === computerSelection) {
-        userWins++;
         localStorage.setItem("currentRound", currentRound + 1);
-        updateWinCount(); 
         return "You win! " + outcomes[playerSelection].message;
     } else {
         return "You lose! " + outcomes[computerSelection].message;
@@ -43,33 +45,42 @@ function updateRoundCounter() {
     roundCounter.textContent = `Round ${currentRound}`;
 }
 
-
 function updateWinCount() {
-    const userWins= document.getElementById("userWins");
-    userWins.textContent = userWins;
+    const Wincount = document.getElementById("userWins");
+    Wincount.textContent = Math.floor(userWins / 5); 
 }
 
 function game() {
-    for (; currentRound <= 5; currentRound++) {
-        let playerSelection = prompt(`Round ${currentRound}: GO!`);
+    while (currentRound <= 5) {
+        updateRoundCounter();
+        let playerSelection = prompt(`Round ${currentRound}: Choose Rock, Paper, or Scissors:`);
         let computerSelection = computerPlay();
         let result = playRound(playerSelection, computerSelection);
 
         if (result.includes("Error")) {
             console.error(result);
-            currentRound--;
             break;
         } else {
             console.log(result);
         }
+
+        if (result.includes("You win")) { 
+            userWins++;
+            localStorage.setItem("userWins", userWins);
+            alert(`Congratulations! You won round ${currentRound}.`);
+            currentRound++; 
+        }
     }
-    console.log(`Game over! You won ${userWins} rounds.`);
-    localStorage.removeItem("currentRound"); 
+
+    if (currentRound > 5) {
+        alert(`Finshed! You won ${Math.floor(userWins / 5)} Total Games!.`);
+        localStorage.removeItem("currentRound");
+        updateWinCount(); 
+    }
 }
 
 function startGame() {
     currentRound = 1;
-    userWins = 0;
     localStorage.setItem("currentRound", currentRound);
     updateRoundCounter();
     updateWinCount(); 
