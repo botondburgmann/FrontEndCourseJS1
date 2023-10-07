@@ -6,6 +6,7 @@ function computerPlay() {
 
 let computerWins = 0;
 let playerWins = 0;
+let gameAborted = false;
 
 function playRound(playerSelection, computerSelection) {
 
@@ -36,21 +37,35 @@ function isInputValid(playerSelection) {
 }
 
 function game() {
+    console.log("Welcome to this rock, paper, scissors game! Write your choice in the prompt field");
     for (let i = 1; i <= 5; i++) {
         let playerSelection = prompt(`Round ${i}: Choose Rock, Paper or Scissors`);
         let computerSelection = computerPlay();
-        if (isInputValid(playerSelection))
-            alert(playRound(playerSelection.trim().toLowerCase(), computerSelection));
+        if (playerSelection === null) {
+            gameAborted = true;
+            console.log("Game aborted.");
+            break;
+        }
         else{
-            alert("Invalid input! Please, choose rock, paper or scissors");
+
+        }
+        if (isInputValid(playerSelection))
+            console.log(playRound(playerSelection.trim().toLowerCase(), computerSelection));
+        else{
+            console.error("Invalid input! Please, choose rock, paper or scissors");
             i--;
         }
     
+    
     }
-    if (playerWins > computerWins) {
-        alert(`Congratulations! You won ${playerWins} to ${computerWins}!`)
-    } else {
-        alert(`You failed! The computer won ${computerWins} to ${playerWins}!`)
+    if (!gameAborted){
+        if (playerWins > computerWins) {
+            console.log(`Congratulations! You won ${playerWins} to ${computerWins}!`)
+        } else if (playerWins < computerWins){
+            console.log(`You failed! The computer won ${computerWins} to ${playerWins}!`)
+        } else {
+            console.log(`It's a tie! Guess none of you was strong enough to defeat the other`)
+        }
     }
 }
 
