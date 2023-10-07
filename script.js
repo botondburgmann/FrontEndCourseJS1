@@ -14,7 +14,7 @@ function computerPlay() {
 }
 
 function playRound(playerSelection, computerSelection) {
-    playerSelection = playerSelection ? playerSelection.toLowerCase() : null;
+    playerSelection = playerSelection ? playerSelection.trim().toLowerCase() : null;
 
     if (!playerSelection) {
         return "Error: Canceled the game.";
@@ -29,7 +29,8 @@ function playRound(playerSelection, computerSelection) {
         paper: { beats: "rock", message: "Paper beats Rock" },
         scissors: { beats: "paper", message: "Scissors beats Paper" },
     };
-
+    if (!(playerSelection === "rock" || playerSelection === "paper" || playerSelection === "scissors"))
+        return "Error: Invalid input"
     if (playerSelection === computerSelection) {
         return "It's a tie!";
     } else if (outcomes[playerSelection] !== undefined && outcomes[playerSelection].beats === computerSelection) {
