@@ -1,4 +1,5 @@
 let currentRound = parseInt(localStorage.getItem("currentRound")) || 1;
+let userWins = 0;
 
 document.querySelector(".btn").addEventListener("click", startGame);
 
@@ -28,6 +29,9 @@ function playRound(playerSelection, computerSelection) {
     if (playerSelection === computerSelection) {
         return "It's a tie!";
     } else if (outcomes[playerSelection] !== undefined && outcomes[playerSelection].beats === computerSelection) {
+        userWins++;
+        localStorage.setItem("currentRound", currentRound + 1);
+        updateWinCount(); 
         return "You win! " + outcomes[playerSelection].message;
     } else {
         return "You lose! " + outcomes[computerSelection].message;
@@ -37,6 +41,12 @@ function playRound(playerSelection, computerSelection) {
 function updateRoundCounter() {
     const roundCounter = document.getElementById("roundCounter");
     roundCounter.textContent = `Round ${currentRound}`;
+}
+
+
+function updateWinCount() {
+    const userWins= document.getElementById("userWins");
+    userWins.textContent = userWins;
 }
 
 function game() {
@@ -50,14 +60,18 @@ function game() {
             currentRound--;
             break;
         } else {
-            console.log(result); 
+            console.log(result);
         }
     }
-    console.log("Game over! Congratulations!");
+    console.log(`Game over! You won ${userWins} rounds.`);
+    localStorage.removeItem("currentRound"); 
 }
 
 function startGame() {
     currentRound = 1;
+    userWins = 0;
+    localStorage.setItem("currentRound", currentRound);
     updateRoundCounter();
+    updateWinCount(); 
     game();
 }
