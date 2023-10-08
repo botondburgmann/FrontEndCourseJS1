@@ -1,72 +1,88 @@
+const choices = ["rock", "paper", "scissors"];
+const wins = {
+    "computer wins" : 0,
+    "player wins" : 0
+}
+
+let isGameAborted = false;
+
+// Choose an option from the choices randomly
 function computerPlay() {
-    const choices = ["rock", "paper", "scissors"];
     const randomIndex = Math.floor(Math.random() * choices.length);
     return choices[randomIndex];
 }
 
-let computerWins = 0;
-let playerWins = 0;
-let gameAborted = false;
-
 function playRound(playerSelection, computerSelection) {
-
+    // Different outcomes (which option beats which option)
     const outcomes = {
         rock: { beats: "scissors", message: "Rock beats Scissors" },
         paper: { beats: "rock", message: "Paper beats Rock" },
         scissors: { beats: "paper", message: "Scissors beats Paper" },
     };
-
+    // if both are equal, return a tie
     if (playerSelection === computerSelection) {
         return "It's a tie!";
+    // if the player's choice beats the computer's choice increase the player's wins and return a win message
     } else if (outcomes[playerSelection] !== undefined && outcomes[playerSelection].beats === computerSelection) {
-        playerWins++;
+        wins["player wins"]++;
         return "You win! " + outcomes[playerSelection].message;
+    // Otherwise increase the computer's wins and return a lose message
     } else {
-        computerWins++;
+        wins["computer wins"]++;
         return "You lose! " + outcomes[computerSelection].message;
     }
 }
 
-function isInputValid(playerSelection) {
-    if (playerSelection.trim().toLowerCase() === "rock" || 
-    playerSelection.trim().toLowerCase() === "paper" || 
-    playerSelection.trim().toLowerCase() === "scissors") 
-        return true;
+function validate(playerSelection) {
+    // If the trimmed, lowercase version of the input is in the choices return the option trimmed and in lowercase
+    if (choices.includes(playerSelection.trim().toLowerCase())){
+        return playerSelection.trim().toLowerCase();
+    }
+    // Otherwise (i.e. invalid input) return an empty string
     else
-        return false;
+        return "";
+}
+
+// Evaluate the winner and display a message
+function results() {
+    if (wins["player wins"] > wins["computer wins"]) {
+        console.log(`Congratulations! You beat the computer ${wins["player wins"]} to ${wins["computer wins"]} `);
+    }
+    else if (wins["player wins"] < wins["computer wins"]) {
+        console.log(`You failed! The computer beat you ${wins["computer wins"]} to ${wins["player wins"]}`);
+    }
+    else {
+        console.log("It's a tie! Neither of you were strong enough");
+    }
 }
 
 function game() {
-    console.log("Welcome to this rock, paper, scissors game! Write your choice in the prompt field");
     for (let i = 1; i <= 5; i++) {
-        let playerSelection = prompt(`Round ${i}: Choose Rock, Paper or Scissors`);
-        let computerSelection = computerPlay();
+        let playerSelection = prompt(`Round ${i}: Choose rock, paper or scissors`);
+        // If the value is null (i.e. the user clicked on cancel: exit the game)
         if (playerSelection === null) {
-            gameAborted = true;
-            console.log("Game aborted.");
-            break;
+            console.log("Bye bye!");
+            isGameAborted = true;
+            break;  
         }
+        // Else, validate the input
         else{
+            playerSelection = validate(playerSelection);
+            // If playerSelection is an empty string it means, there was an error
+            if (playerSelection === "") {
+                console.error("Invalid input! Please, choose rock paper or scissors");
+                i--;
+            // Else, let the computer choose, and play the round 
+            } else {
+                let computerSelection = computerPlay()
+                console.log(playRound(playerSelection, computerSelection));
+            }
+        }
 
-        }
-        if (isInputValid(playerSelection))
-            console.log(playRound(playerSelection.trim().toLowerCase(), computerSelection));
-        else{
-            console.error("Invalid input! Please, choose rock, paper or scissors");
-            i--;
-        }
-    
-    
     }
-    if (!gameAborted){
-        if (playerWins > computerWins) {
-            console.log(`Congratulations! You won ${playerWins} to ${computerWins}!`)
-        } else if (playerWins < computerWins){
-            console.log(`You failed! The computer won ${computerWins} to ${playerWins}!`)
-        } else {
-            console.log(`It's a tie! Guess none of you was strong enough to defeat the other`)
-        }
-    }
+    // If the game wasn't aborted show the results after the 5th correct round
+    if (isGameAborted === false)
+        results();
 }
 
-game();
+game()
