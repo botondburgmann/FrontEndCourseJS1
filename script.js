@@ -57,6 +57,7 @@ function results() {
 }
 
 function game() {
+    console.log("Welcome to this rock, paper, scissors game! Write your choice in the prompt field");
     for (let i = 1; i <= 5; i++) {
         let playerSelection = prompt(`Round ${i}: Choose rock, paper or scissors`);
         // If the value is null (i.e. the user clicked on cancel: exit the game)
@@ -78,11 +79,9 @@ function game() {
                 console.log(playRound(playerSelection, computerSelection));
             }
         }
-
     }
     // If the game wasn't aborted show the results after the 5th correct round
     if (isGameAborted === false)
         results();
 }
-
 game()
